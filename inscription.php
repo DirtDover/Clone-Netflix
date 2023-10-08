@@ -1,3 +1,40 @@
+// Conection BDD
+
+<?php 
+try {
+	$bddUser = new PDO('mysql:host=localhost;dbname=clone_netflix;charset-utf8','root','');
+} catch(Exception $e) {
+	die('Erreur : '.$e->getMessage());
+}
+?>
+
+// Création d'une session
+<?php 
+session_start();
+// Vérification et récupération des infos du form
+if(isset($_POST['submit'])) {
+	$email = htmlspecialchars($_POST['email']);
+	$password = htmlspecialchars($_POST['password']);
+	$confirm_password = htmlspecialchars($_POST['password_two']);
+
+
+	//vérif syntaxe email
+if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+	header('location: inscription.php?error=1&message=Votre adresse email est invalide.');
+	exit();
+}
+
+if($password === $confirm_password){
+	
+}
+} else {
+    // Le formulaire n'a pas été soumis
+    echo "Le formulaire n'a pas été soumis.";
+}
+
+
+?>
+
 <!DOCTYPE html>
 <html>
 <head>

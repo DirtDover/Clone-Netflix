@@ -2,6 +2,7 @@
 <?php 
 // session
 session_start();
+require ('src/log.php');
 
 if(isset($_SESSION['connect'])){
 	header('location: index.php');

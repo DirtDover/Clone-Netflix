@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-
+require('src/log.php');
 
 if(!empty($_POST['email']) && !empty($_POST['password'])){
 
@@ -44,6 +44,13 @@ if(!empty($_POST['email']) && !empty($_POST['password'])){
 
 			$_SESSION['connect'] = 1;
 			$_SESSION['email'] = $user['email'];
+
+			//se souvenir de moi
+			if(isset($_POST['auto'])){
+
+				setcookie('auth', $user['secret'], time()+364*24*3600, '/', null, false, true );
+
+			}
 
 			header('location: index.php?success=1');
 		} else {

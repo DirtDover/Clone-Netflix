@@ -2,6 +2,11 @@
 <?php 
 // session
 session_start();
+
+if(isset($_SESSION['connect'])){
+	header('location: index.php');
+	exit();
+}
 // Vérification et récupération des infos du form
 if(!empty($_POST['email']) && !empty($_POST['password']) && !empty($_POST['password_two'])) {
 	$email = htmlspecialchars($_POST['email']);

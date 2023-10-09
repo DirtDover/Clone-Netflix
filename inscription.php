@@ -1,38 +1,56 @@
-// Conection BDD
 
 <?php 
-try {
-	$bddUser = new PDO('mysql:host=localhost;dbname=clone_netflix;charset-utf8','root','');
-} catch(Exception $e) {
-	die('Erreur : '.$e->getMessage());
-}
-?>
-
-// Création d'une session
-<?php 
+// session
 session_start();
 // Vérification et récupération des infos du form
-if(isset($_POST['submit'])) {
+if(!empty($_POST['email']) && !empty($_POST['password']) && !empty($_POST['password_two'])) {
 	$email = htmlspecialchars($_POST['email']);
 	$password = htmlspecialchars($_POST['password']);
 	$confirm_password = htmlspecialchars($_POST['password_two']);
 
+	require('src/connect.php');
 
-	//vérif syntaxe email
-if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
-	header('location: inscription.php?error=1&message=Votre adresse email est invalide.');
+	//Verif Password
+	if($password != $confirm_password){
+		
+		header('location: inscription.php?error=1&message=Vos mots de passe ne sont pas identique.');
+		exit();
+	}
+
+	//Verif email
+	if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+
+		header('location: inscription.php?error=1&message=Votre adresse mail est invalide.');
+		exit();
+	}
+
+	//Email déja use 
+	$req = $db->prepare("SELECT count(*) as numberEmail FROM user WHERE email = ?");
+	$req ->execute(array($email));
+
+	while($email_verifivation = $req->fetch()){
+
+		if($email_verification['numberEmail'] != 0 ){
+
+			header('location: inscription.php?error=1&message=Votre adresse email déja utilisée.');
+			exit();
+		}
+	}
+
+	// Hash
+	$secret =  sha1($email).time();
+	$secret = sha1($secret).time();
+
+	//Chiffrage du mdp
+	$password = "aq1".sha1($password."129456")."23";
+
+	// Envoi
+	$req = $db->prepare("INSERT INTO user(email, password, secret) VALUE (?,?,?)");
+	$req ->execute(array($email, $password, $secret));
+
+	header('location: inscription.php?success=1');
 	exit();
-}
-
-if($password === $confirm_password){
-	
-}
-} else {
-    // Le formulaire n'a pas été soumis
-    echo "Le formulaire n'a pas été soumis.";
-}
-
-
+} 
 ?>
 
 <!DOCTYPE html>
@@ -50,6 +68,18 @@ if($password === $confirm_password){
 	<section>
 		<div id="login-body">
 			<h1>S'inscrire</h1>
+
+			<?php if(isset($_GET['error'])){
+ 
+ 					if(isset($_GET['message'])) {
+
+	 echo'<div class="alert error">'.htmlspecialchars($_GET['message']).'</div>';
+}
+	} else if(isset($_GET['success'])){
+	
+		echo '<div class= "alert success">Vous êtes désormais inscrit. <a href="index.php">Connectez vous</a>.</div>';
+	
+	}?>
 
 			<form method="post" action="inscription.php">
 				<input type="email" name="email" placeholder="Votre adresse email" required />

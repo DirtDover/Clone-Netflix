@@ -8,4 +8,4 @@ Application basé sur PHP qui a pour but à un utilisateur de s'inscrire / se co
 
 Projet de fin de ma formation PHP.
 
-**Lien du site** : [Clone-Netflix](https://dirtdover.github.io/FoodApp/)
+**Lien du site** : [Clone-Netflix](https://dirtdover.github.io/Clone-Netflix/)
